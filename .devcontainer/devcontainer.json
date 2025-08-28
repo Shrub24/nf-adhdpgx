@@ -1,21 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "Nextflow Dev",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "nextflow.nextflow",
-        "esbenp.prettier-vscode"
-      ]
-    }
-  },
-  // Keep the container running after closing VS Code
-  "shutdownAction": "stopContainer"
-}
-=======
     "name": "nfcore",
     "image": "nfcore/gitpod:latest",
     "remoteUser": "gitpod",
@@ -35,4 +18,3 @@
         }
     }
 }
->>>>>>> 8661e61 (initial template build from nf-core/tools, version 3.3.2)
