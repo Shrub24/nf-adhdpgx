@@ -1,0 +1,10 @@
+ERROR ~ Script compilation error
+- file : /workspaces/nf-core-adhdpgx/.nf-test-3748ec5eb74af0959a94c27375401574.nf
+- cause: Unexpected character: '\'' @ line 11, column 25.
+   include { SETUP  } from '/workspaces/nf-core-adhdpgx/
+                           ^
+
+1 error
+
+
+ -- Check '/workspaces/nf-core-adhdpgx/.nf-test/tests/3748ec5eb74af0959a94c27375401574/meta/nextflow.log' file for details

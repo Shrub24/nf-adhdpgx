@@ -1,0 +1,51 @@
+N E X T F L O W  ~  version 25.04.6
+Launching `/workspaces/nf-core-adhdpgx/.nf-test-3f424ec71e1b2290b625377c421311b5.nf` [distraught_mayer] DSL2 - revision: 262516788c
+WARN: The operator `first` is useless when applied to a value channel which returns a single value by definition
+WARN: Input tuple does not match tuple declaration in process `PREPROCESSING:GATK4_MARKDUPLICATES` -- offending value: [[id:empty_bam, single_end:false, sex:XX], [], []]
+[8d/48b411] Submitted process > PREPROCESSING:GATK4_MARKDUPLICATES (empty_bam)
+ERROR ~ Error executing process > 'PREPROCESSING:GATK4_MARKDUPLICATES (empty_bam)'
+
+Caused by:
+  Process `PREPROCESSING:GATK4_MARKDUPLICATES (empty_bam)` terminated with an error exit status (127)
+
+
+Command executed:
+
+  gatk --java-options "-Xmx9830M -XX:-UsePerfData" \
+      MarkDuplicates \
+       \
+      --OUTPUT empty_bam.bam \
+      --METRICS_FILE empty_bam.bam.metrics \
+      --TMP_DIR . \
+      --REFERENCE_SEQUENCE genome.fasta \
+  
+  
+  # If cram files are wished as output, the run samtools for conversion
+  if [[ empty_bam.bam == *.cram ]]; then
+      samtools view -Ch -T genome.fasta -o empty_bam.bam empty_bam.bam
+      rm empty_bam.bam
+      samtools index empty_bam.bam
+  fi
+  
+  cat <<-END_VERSIONS > versions.yml
+  "PREPROCESSING:GATK4_MARKDUPLICATES":
+      gatk4: $(echo $(gatk --version 2>&1) | sed 's/^.*(GATK) v//; s/ .*$//')
+      samtools: $(echo $(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*$//')
+  END_VERSIONS
+
+Command exit status:
+  127
+
+Command output:
+  (empty)
+
+Command error:
+  .command.sh: line 2: gatk: command not found
+
+Work dir:
+  /workspaces/nf-core-adhdpgx/.nf-test/tests/3f424ec71e1b2290b625377c421311b5/work/8d/48b411eaa5f44ee1657a4518491c63
+
+Tip: you can replicate the issue by changing to the process work dir and entering the command `bash .command.run`
+
+ -- Check '/workspaces/nf-core-adhdpgx/.nf-test/tests/3f424ec71e1b2290b625377c421311b5/meta/nextflow.log' file for details
+Execution cancelled -- Finishing pending tasks before exit

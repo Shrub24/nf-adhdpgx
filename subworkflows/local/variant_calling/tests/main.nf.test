@@ -1,0 +1,189 @@
+nextflow_workflow {
+
+    name "Test Subworkflow VARIANT_CALLING"
+    script "../main.nf"
+    workflow "VARIANT_CALLING"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "subworkflows/variant_calling"
+    tag "gatk4"
+    tag "gatk4/haplotypecaller"
+    tag "gatk4/markduplicates" 
+    tag "gatk4/baserecalibrator"
+    tag "gatk4/applybqsr"
+
+    test("human - paired_end_bam - hg38") {
+
+        when {
+            workflow {
+                """
+                input[0] = [
+                    [ id:'test_sample', single_end:false, sex:'XX' ], // meta map
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists: true)
+                ]
+                input[1] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
+                ]
+                input[2] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true)
+                ]
+                input[3] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.dict', checkIfExists: true)
+                ]
+                input[4] = [
+                    [ id:'dbsnp' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() },
+                { assert workflow.out.vcf.size() == 1 },
+                { assert workflow.out.vcf[0][1].toString().endsWith('.vcf.gz') },
+                { assert workflow.out.tbi.size() == 1 },
+                { assert workflow.out.tbi[0][1].toString().endsWith('.vcf.gz.tbi') },
+                { assert workflow.out.versions }
+            )
+        }
+    }
+
+    test("human - single_end_bam - hg38") {
+
+        when {
+            workflow {
+                """
+                input[0] = [
+                    [ id:'test_single', single_end:true, sex:'XY' ], // meta map
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.single_end.sorted.bam', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.single_end.sorted.bam.bai', checkIfExists: true)
+                ]
+                input[1] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
+                ]
+                input[2] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true)
+                ]
+                input[3] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.dict', checkIfExists: true)
+                ]
+                input[4] = [
+                    [ id:'dbsnp' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(workflow.out).match() },
+                { assert workflow.out.vcf.size() == 1 },
+                { assert workflow.out.vcf[0][0].id == 'test_single' },
+                { assert workflow.out.vcf[0][0].single_end == true },
+                { assert workflow.out.tbi.size() == 1 }
+            )
+        }
+    }
+
+    test("human - multiple_samples - batch_processing") {
+
+        when {
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ id:'sample1', single_end:false, sex:'XX' ],
+                        file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists: true)
+                    ],
+                    [
+                        [ id:'sample2', single_end:false, sex:'XY' ],
+                        file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists: true)
+                    ]
+                )
+                input[1] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
+                ]
+                input[2] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true)
+                ]
+                input[3] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.dict', checkIfExists: true)
+                ]
+                input[4] = [
+                    [ id:'dbsnp' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.vcf.size() == 2 },
+                { assert workflow.out.vcf.collect { it[0].id }.containsAll(['sample1', 'sample2']) },
+                { assert workflow.out.tbi.size() == 2 }
+            )
+        }
+    }
+
+    test("human - empty_bam - should_fail") {
+
+        when {
+            workflow {
+                """
+                input[0] = [
+                    [ id:'empty_test', single_end:false, sex:'XX' ],
+                    [],
+                    []
+                ]
+                input[1] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
+                ]
+                input[2] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true)
+                ]
+                input[3] = [
+                    [ id:'hg38' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.dict', checkIfExists: true)
+                ]
+                input[4] = [
+                    [ id:'dbsnp' ],
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.failed },
+                { assert workflow.stdout.contains('ERROR') || workflow.stderr.contains('ERROR') }
+            )
+        }
+    }
+}
