@@ -1,0 +1,16 @@
+{
+  "name": "Nextflow Dev",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "nextflow.nextflow",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  // Keep the container running after closing VS Code
+  "shutdownAction": "stopContainer"
+}
