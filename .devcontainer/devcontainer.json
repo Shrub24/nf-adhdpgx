@@ -3,7 +3,9 @@
     "image": "nfcore/gitpod:latest",
     "remoteUser": "gitpod",
     "runArgs": ["--privileged"],
-
+    "updateRemoteUserUID": true,
+    "postCreateCommand": "sudo chown -R gitpod:gitpod /opt/conda && sudo chmod -R u+w,g+rx /opt/conda/bin",
+    
     // Configure tool-specific properties.
     "customizations": {
         // Configure properties specific to VS Code.
