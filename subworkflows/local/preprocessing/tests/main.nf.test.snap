@@ -3,16 +3,52 @@
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "id": "test_no_bqsr",
+                            "single_end": false,
+                            "sex": "XY"
+                        },
+                        "test_no_bqsr.bam:md5,9f98c1d11b1885973398228449a69cbd",
+                        "test_no_bqsr.bam.bai:md5,535ea01b2587507e36dabcfc8cef935a"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        {
+                            "id": "test_no_bqsr",
+                            "single_end": false,
+                            "sex": "XY"
+                        },
+                        "test_no_bqsr.bam.metrics:md5,8e8d17d1c8f0d58ed86b4e6960c90327"
+                    ]
                 ],
-                "bam_bai": [
-                    
+                "2": [
+                    "versions.yml:md5,be7af9f17737e9ed6ac4d51da4f780bc"
+                ],
+                "bam": [
+                    [
+                        {
+                            "id": "test_no_bqsr",
+                            "single_end": false,
+                            "sex": "XY"
+                        },
+                        "test_no_bqsr.bam:md5,9f98c1d11b1885973398228449a69cbd",
+                        "test_no_bqsr.bam.bai:md5,535ea01b2587507e36dabcfc8cef935a"
+                    ]
+                ],
+                "metrics": [
+                    [
+                        {
+                            "id": "test_no_bqsr",
+                            "single_end": false,
+                            "sex": "XY"
+                        },
+                        "test_no_bqsr.bam.metrics:md5,8e8d17d1c8f0d58ed86b4e6960c90327"
+                    ]
                 ],
                 "versions": [
-                    
+                    "versions.yml:md5,be7af9f17737e9ed6ac4d51da4f780bc"
                 ]
             }
         ],
@@ -20,22 +56,62 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.6"
         },
-        "timestamp": "2025-08-28T18:04:39.958305883"
+        "timestamp": "2025-09-03T14:17:13.725772781"
     },
     "human - paired_end_bam - bqsr_enabled": {
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "id": "test_sample",
+                            "single_end": false,
+                            "sex": "XX"
+                        },
+                        "test_sample.bsqrd.bam:md5,12244da4731a5436253a46128e907b84",
+                        "test_sample.bsqrd.bam.bai:md5,96205fd418fbd72722e37454dfb12d9d"
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        {
+                            "id": "test_sample",
+                            "single_end": false,
+                            "sex": "XX"
+                        },
+                        "test_sample.bam.metrics:md5,64eaeb87ad43406af0929c73d7d10ec5"
+                    ]
                 ],
-                "bam_bai": [
-                    
+                "2": [
+                    "versions.yml:md5,26328e788fb5517c39be15db63e843b5",
+                    "versions.yml:md5,8c654e575b8948ecf7b91a080c2c53ea",
+                    "versions.yml:md5,be7af9f17737e9ed6ac4d51da4f780bc"
+                ],
+                "bam": [
+                    [
+                        {
+                            "id": "test_sample",
+                            "single_end": false,
+                            "sex": "XX"
+                        },
+                        "test_sample.bsqrd.bam:md5,12244da4731a5436253a46128e907b84",
+                        "test_sample.bsqrd.bam.bai:md5,96205fd418fbd72722e37454dfb12d9d"
+                    ]
+                ],
+                "metrics": [
+                    [
+                        {
+                            "id": "test_sample",
+                            "single_end": false,
+                            "sex": "XX"
+                        },
+                        "test_sample.bam.metrics:md5,64eaeb87ad43406af0929c73d7d10ec5"
+                    ]
                 ],
                 "versions": [
-                    
+                    "versions.yml:md5,26328e788fb5517c39be15db63e843b5",
+                    "versions.yml:md5,8c654e575b8948ecf7b91a080c2c53ea",
+                    "versions.yml:md5,be7af9f17737e9ed6ac4d51da4f780bc"
                 ]
             }
         ],
@@ -43,6 +119,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.6"
         },
-        "timestamp": "2025-08-28T18:04:33.684777277"
+        "timestamp": "2025-09-03T14:17:02.654514695"
     }
 }

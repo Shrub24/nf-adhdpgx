@@ -5,6 +5,13 @@
     "runArgs": ["--privileged"],
     "updateRemoteUserUID": true,
     "postCreateCommand": "sudo chown -R gitpod:gitpod /opt/conda && sudo chmod -R u+w,g+rx /opt/conda/bin",
+
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    },
+
+    "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind,consistency=cached",
+    "workspaceFolder": "${localWorkspaceFolder}",
     
     // Configure tool-specific properties.
     "customizations": {

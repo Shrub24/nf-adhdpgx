@@ -15,21 +15,19 @@ nextflow_workflow {
     tag "gatk4/applybqsr"
 
     test("human - paired_end_bam - bqsr_enabled") {
-
         when {
             workflow {
                 """
-                input[0] = [
-                    [ id:'test_sample', single_end:false, sex:'XX' ], // meta map
-                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists: true)
-                ]
-                input[1] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
-                input[2] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true)
+                input[0] = Channel.of([
+                    [ id:'test_sample', single_end:false, sex:'XX' ],
+                    file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true)
+                ])
+                input[1] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ])
+                input[2] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true) ])
                 input[3] = true // enable_bqsr
-                input[4] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.dict', checkIfExists: true)
-                input[5] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz', checkIfExists: true)
-                input[6] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi', checkIfExists: true)
+                input[4] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.dict', checkIfExists: true) ])
+                input[5] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz', checkIfExists: true) ])
+                input[6] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi', checkIfExists: true) ])
                 """
             }
         }
@@ -38,10 +36,11 @@ nextflow_workflow {
             assertAll(
                 { assert workflow.success },
                 { assert snapshot(workflow.out).match() },
-                { assert workflow.out.bam_bai.size() == 1 },
-                { assert workflow.out.bam_bai[0][0].id == 'test_sample' },
-                { assert workflow.out.bam_bai[0][1].toString().endsWith('.bam') },
-                { assert workflow.out.bam_bai[0][2].toString().endsWith('.bai') },
+                { assert workflow.out.bam.size() == 1 },
+                { assert workflow.out.bam[0][0].id == 'test_sample' },
+                { assert workflow.out.bam[0][1].toString().endsWith('.bam') },
+                { assert workflow.out.bam[0][2].toString().endsWith('.bai') },
+                { assert workflow.out.metrics.size() == 1 },
                 { assert workflow.out.versions }
             )
         }
@@ -52,17 +51,16 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                input[0] = [
-                    [ id:'test_no_bqsr', single_end:false, sex:'XY' ], // meta map
-                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists: true)
-                ]
-                input[1] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
-                input[2] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true)
+                input[0] = Channel.of([
+                    [ id:'test_no_bqsr', single_end:false, sex:'XY' ],
+                    file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true)
+                ])
+                input[1] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ])
+                input[2] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true) ])
                 input[3] = false // enable_bqsr
-                input[4] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.dict', checkIfExists: true)
-                input[5] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz', checkIfExists: true)
-                input[6] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi', checkIfExists: true)
+                input[4] = Channel.empty()
+                input[5] = Channel.empty()
+                input[6] = Channel.empty()
                 """
             }
         }
@@ -71,10 +69,11 @@ nextflow_workflow {
             assertAll(
                 { assert workflow.success },
                 { assert snapshot(workflow.out).match() },
-                { assert workflow.out.bam_bai.size() == 1 },
-                { assert workflow.out.bam_bai[0][0].id == 'test_no_bqsr' },
-                { assert workflow.out.bam_bai[0][1].toString().endsWith('.bam') },
-                { assert workflow.out.bam_bai[0][2].toString().endsWith('.bai') }
+                { assert workflow.out.bam.size() == 1 },
+                { assert workflow.out.bam[0][0].id == 'test_no_bqsr' },
+                { assert workflow.out.bam[0][1].toString().endsWith('.bam') },
+                { assert workflow.out.bam[0][2].toString().endsWith('.bai') },
+                { assert workflow.out.metrics.size() == 1 }
             )
         }
     }
@@ -85,23 +84,15 @@ nextflow_workflow {
             workflow {
                 """
                 input[0] = Channel.of(
-                    [
-                        [ id:'sample1', single_end:false, sex:'XX' ],
-                        file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
-                        file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists: true)
-                    ],
-                    [
-                        [ id:'sample2', single_end:false, sex:'XY' ],
-                        file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
-                        file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists: true)
-                    ]
+                    [ [ id:'sample1', single_end:false, sex:'XX' ], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true) ],
+                    [ [ id:'sample2', single_end:false, sex:'XY' ], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/bam/test2.paired_end.sorted.bam', checkIfExists: true) ]
                 )
-                input[1] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
-                input[2] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true)
+                input[1] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ])
+                input[2] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true) ])
                 input[3] = true // enable_bqsr
-                input[4] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.dict', checkIfExists: true)
-                input[5] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz', checkIfExists: true)
-                input[6] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi', checkIfExists: true)
+                input[4] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.dict', checkIfExists: true) ])
+                input[5] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz', checkIfExists: true) ])
+                input[6] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi', checkIfExists: true) ])
                 """
             }
         }
@@ -109,10 +100,42 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success },
-                { assert workflow.out.bam_bai.size() == 2 },
-                { assert workflow.out.bam_bai.collect { it[0].id }.containsAll(['sample1', 'sample2']) },
-                { assert workflow.out.bam_bai.every { it[1].toString().endsWith('.bam') } },
-                { assert workflow.out.bam_bai.every { it[2].toString().endsWith('.bai') } }
+                { assert workflow.out.bam.size() == 2 },
+                { assert workflow.out.bam.collect { it[0].id }.containsAll(['sample1', 'sample2']) },
+                { assert workflow.out.bam.every { it[1].toString().endsWith('.bam') } },
+                { assert workflow.out.bam.every { it[2].toString().endsWith('.bai') } },
+                { assert workflow.out.metrics.size() == 2 }
+            )
+        }
+    }
+
+        test("human - multiple_samples - bqsr_disabled") {
+
+        when {
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [ [ id:'sample1', single_end:false, sex:'XX' ], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true) ],
+                    [ [ id:'sample2', single_end:false, sex:'XY' ], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/bam/test2.paired_end.sorted.bam', checkIfExists: true) ]
+                )
+                input[1] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ])
+                input[2] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true) ])
+                input[3] = false // enable_bqsr
+                input[4] = Channel.empty()
+                input[5] = Channel.empty()
+                input[6] = Channel.empty()
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.bam.size() == 2 },
+                { assert workflow.out.bam.collect { it[0].id }.containsAll(['sample1', 'sample2']) },
+                { assert workflow.out.bam.every { it[1].toString().endsWith('.bam') } },
+                { assert workflow.out.bam.every { it[2].toString().endsWith('.bai') } },
+                { assert workflow.out.metrics.size() == 2 }
             )
         }
     }
@@ -122,17 +145,16 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                input[0] = [
+                input[0] = Channel.of([
                     [ id:'empty_bam', single_end:false, sex:'XX' ],
-                    [],
                     []
-                ]
-                input[1] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true)
-                input[2] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true)
+                ])
+                input[1] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ])
+                input[2] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true) ])
                 input[3] = false // enable_bqsr
-                input[4] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.dict', checkIfExists: true)
-                input[5] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz', checkIfExists: true)
-                input[6] = file('https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi', checkIfExists: true)
+                input[4] = Channel.empty()
+                input[5] = Channel.empty()
+                input[6] = Channel.empty()
                 """
             }
         }
