@@ -1,0 +1,66 @@
+// TODO nf-core: Once you h                input[2] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta.amb', checkIfExists: true) ])ve added the required tests, please run the following command to build this file:
+// nf-core subworkflows test alignment
+nextflow_workflow {
+
+    name "Test Subworkflow ALIGNMENT"
+    script "../main.nf"
+    workflow "ALIGNMENT"
+
+    tag "subworkflows"
+    tag "subworkflows_"
+    tag "subworkflows/alignment"
+    // TODO nf-core: Add tags for all modules used within this subworkflow. Example:
+    tag "samtools"
+    tag "samtools/sort"
+    tag "samtools/index"
+
+
+test("single sample alignment") {
+    when {
+        workflow {
+            """
+            input[0] = Channel.of([
+                    [ id:'sample1', single_end:false ],
+                    file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/fastq/test_1.fastq.gz', checkIfExists: true),
+                    file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/fastq/test_2.fastq.gz', checkIfExists: true)
+                ])
+            input[1] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ])
+            input[2] = Channel.value([ [ref: true], file("${projectDir}/subworkflows/local/alignment/tests/data/", checkIfExists: true) ])
+            """
+        }
+    }
+    then {
+        assertAll(
+            { assert workflow.success },
+            { assert workflow.out.bam_bai.size() == 1 },
+            { assert workflow.out.bam_bai[0][0].id == 'sample1' },
+            { assert workflow.out.bam_bai[0][1].toString().endsWith('.bam') },
+            { assert workflow.out.bam_bai[0][2].toString().endsWith('.bai') }
+        )
+    }
+}
+
+test("multiple sample alignment") {
+    when {
+        workflow {
+            """
+            input[0] = Channel.of(
+                [ [ id:'sample1', single_end:false ], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/fastq/test_1.fastq.gz', checkIfExists: true), file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/fastq/test_2.fastq.gz', checkIfExists: true) ],
+                [ [ id:'sample2', single_end:false ], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/fastq/test2_1.fastq.gz', checkIfExists: true), file(params.modules_testdata_base_path + '/genomics/homo_sapiens/illumina/fastq/test2_2.fastq.gz', checkIfExists: true) ]
+            )
+            input[1] = Channel.value([ [ref: true], file(params.modules_testdata_base_path + '/genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ])
+            input[2] = Channel.value([ [ref: true], file("${projectDir}/subworkflows/local/alignment/tests/data/", checkIfExists: true) ])
+            """
+        }
+    }
+    then {
+        assertAll(
+            { assert workflow.success },
+            { assert workflow.out.bam_bai.size() == 2 },
+            { assert workflow.out.bam_bai.collect { it[0].id }.containsAll(['sample1', 'sample2']) },
+            { assert workflow.out.bam_bai.every { it[1].toString().endsWith('.bam') } },
+            { assert workflow.out.bam_bai.every { it[2].toString().endsWith('.bai') } }
+        )
+    }
+}
+}
