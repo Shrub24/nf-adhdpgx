@@ -18,11 +18,11 @@ workflow PREPROCESSING {
 
 
     main:
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     // Mark duplicates - takes [meta, bam], outputs [meta, bam] and [meta, bai]
     
-    GATK4_MARKDUPLICATES( ch_bam, ch_fasta.map{it[1]}, ch_fai.map{it[1]} )
+    GATK4_MARKDUPLICATES( ch_bam, ch_fasta.map{it -> it[1]}, ch_fai.map{it -> it[1]} )
 
     ch_bam.view { meta, bam -> println "before: ${meta.id} -> ${bam}" }
 
@@ -51,9 +51,9 @@ workflow PREPROCESSING {
         
         GATK4_APPLYBQSR(
             ch_recal_input_intervals,
-            ch_fasta.map{it[1]},
-            ch_fai.map{it[1]},
-            ch_dict.map{it[1]}
+            ch_fasta.map{it -> it[1]},
+            ch_fai.map{it -> it[1]},
+            ch_dict.map{it -> it[1]}
         )
         ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions.first())
 

@@ -6,9 +6,8 @@
 
 // include { SAMTOOLS_SORT      } from '../../../modules/nf-core/samtools/sort/main'
 // include { SAMTOOLS_INDEX     } from '../../../modules/nf-core/samtools/index/main'
-include { }
 
-include { }
+include { GATK4_HAPLOTYPECALLER } from '../../../modules/nf-core/gatk4/haplotypecaller/main'
 
 workflow VARIANT_CALLING {
 
@@ -18,15 +17,7 @@ workflow VARIANT_CALLING {
 
     main:
 
-    ch_versions = Channel.empty()
 
-    // TODO nf-core: substitute modules here for the modules of your subworkflow
-
-    SAMTOOLS_SORT ( ch_bam )
-    ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions.first())
-
-    SAMTOOLS_INDEX ( SAMTOOLS_SORT.out.bam )
-    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.first())
 
     emit:
     // TODO nf-core: edit emitted channels

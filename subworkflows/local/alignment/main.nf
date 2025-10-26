@@ -17,7 +17,7 @@ workflow ALIGNMENT {
 
     main:
 
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
 
     BWA_MEM ( ch_reads, ch_index, ch_fasta, false )
@@ -26,7 +26,6 @@ workflow ALIGNMENT {
     ch_bam_bai = SAMTOOLS_SORT.out.bam.join(SAMTOOLS_SORT.out.bai)  // channel: [ val(meta), [ bam ] ]
 
     emit:
-    // TODO nf-core: edit emitted channels
     bam_bai      = ch_bam_bai                    // channel: [ val(meta), [ bam, bai ] ]
     versions = ch_versions                     // channel: [ versions.yml ]
 }
