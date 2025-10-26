@@ -1,29 +1,20 @@
 {
     "name": "nfcore",
-    "image": "nfcore/gitpod:latest",
-    "remoteUser": "gitpod",
-    "runArgs": ["--privileged"],
-    "updateRemoteUserUID": true,
-    "postCreateCommand": "sudo chown -R gitpod:gitpod /opt/conda && sudo chmod -R u+w,g+rx /opt/conda/bin",
+    "image": "nfcore/devcontainer:latest",
 
-    "features": {
-        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    "remoteUser": "root",
+    "privileged": true,
+
+    "remoteEnv": {
+        // Workspace path on the host for mounting with docker-outside-of-docker
+        "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
     },
 
-    "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind,consistency=cached",
-    "workspaceFolder": "${localWorkspaceFolder}",
-    
-    // Configure tool-specific properties.
-    "customizations": {
-        // Configure properties specific to VS Code.
-        "vscode": {
-            // Set *default* container specific settings.json values on container create.
-            "settings": {
-                "python.defaultInterpreterPath": "/opt/conda/bin/python"
-            },
+    "onCreateCommand": "./.devcontainer/setup.sh",
 
-            // Add the IDs of extensions you want installed when the container is created.
-            "extensions": ["ms-python.python", "ms-python.vscode-pylance", "nf-core.nf-core-extensionpack"]
-        }
+    "hostRequirements": {
+        "cpus": 4,
+        "memory": "16gb",
+        "storage": "32gb"
     }
 }
